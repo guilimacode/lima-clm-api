@@ -1,0 +1,10 @@
+.git
+.vscode
+.idea
+
+bin
+tmp
+
+*.log
+
+.env
