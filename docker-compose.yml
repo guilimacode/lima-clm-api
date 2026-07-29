@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api:
     build: .
@@ -18,12 +16,11 @@ services:
     depends_on:
       - postgres
 
+    env_file:
+      - .env.development
+
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: appdb
+      APP_ENV: development
 
   postgres:
     image: postgres:17.6
@@ -31,10 +28,8 @@ services:
 
     restart: unless-stopped
 
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: appdb
+    env_file:
+      - .env.development
 
     ports:
       - "5432:5432"
