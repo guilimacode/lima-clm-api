@@ -9,9 +9,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/guilimacode/lima-clm-api/shared/config"
+	"github.com/guilimacode/lima-clm-api/shared/database"
 )
 
 func main() {
+
+	config.LoadConfig()
+
+	database.Connect()
+
 	app := fiber.New(fiber.Config{
 		AppName: "Lima CLM API",
 	})
@@ -31,16 +38,16 @@ func main() {
 
 	go func() {
 		if err := app.Listen(":8080"); err != nil {
-			log.Fatalf("Erro ao iniciar o servidor: %v", err)
+			log.Fatalf("Error starting the server: %v", err)
 		}
 	}()
 
-	log.Println("Servidor rodando na porta 8080...")
+	log.Println("Server running on port 8080...")
 
 	<-quit
-	log.Println("Iniciando Graceful Shutdown")
+	log.Println("Starting Graceful Shutdown")
 
 	if err := app.Shutdown(); err != nil {
-		log.Fatalf("Erro ao forçar o desligamento: %v", err)
+		log.Fatalf("Error while forcing shutdown: %v", err)
 	}
 }
