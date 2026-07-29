@@ -36,13 +36,18 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	go func() {
-		if err := app.Listen(":8080"); err != nil {
+		if err := app.Listen(":" + port); err != nil {
 			log.Fatalf("Error starting the server: %v", err)
 		}
 	}()
 
-	log.Println("Server running on port 8080...")
+	log.Printf("Server running on port %s...\n", port)
 
 	<-quit
 	log.Println("Starting Graceful Shutdown")
