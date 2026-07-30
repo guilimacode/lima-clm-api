@@ -2,40 +2,48 @@ services:
   api:
     build: .
     container_name: lima-clm
-
     restart: unless-stopped
-
     ports:
       - "8080:8080"
-
     volumes:
       - .:/app
-
     working_dir: /app
-
     depends_on:
-      - postgres
-
+      postgres:
+        condition: service_healthy
     env_file:
       - .env.development
-
     environment:
       APP_ENV: development
+
+  migrate:
+    build: .
+    container_name: lima-clm-migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.development
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: make migrate-up
 
   postgres:
     image: postgres:17.6
     container_name: postgres-db
-
     restart: unless-stopped
-
     env_file:
       - .env.development
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres_data:
