@@ -1,6 +1,7 @@
 .PHONY: run test build
 
 run:
+	GOFLAGS="-buildvcs=false" swag init -g cmd/api/main.go -d ./ --parseDependency
 	go run cmd/api/main.go
 
 test:
